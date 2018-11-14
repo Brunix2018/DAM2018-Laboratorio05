@@ -1,7 +1,11 @@
 package ar.edu.utn.frsf.isi.dam.laboratorio05;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +43,43 @@ public class MapaFragment extends SupportMapFragment implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap map) {
         miMapa = map;
+        actualizarMapa();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        System.out.print("Entro al result");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            switch (requestCode) {
+            case 9999: {
+                if (grantResults.length > 0 && grantResults[0] ==
+                        PackageManager.PERMISSION_GRANTED) {
+                    actualizarMapa();
+                } else { // }
+                    return;
+                }
+            }
+        }
+    }
+
+    private void actualizarMapa() {
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(),
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                            //requestPermissions(
+                           ActivityCompat.requestPermissions(this.getActivity(),
+                                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                                            android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                    9999);
+                            return;
+        }
+
+        miMapa.setMyLocationEnabled(true);
+    }
+
+
 
 
 }
